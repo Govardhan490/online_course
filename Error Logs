@@ -1,0 +1,21 @@
+sudo apachectl stop
+sudo service mysql stop
+
+sudo chmod -R 777 /opt/lampp/htdocs
+sudo chmod -R 755 /opt/lampp/htdocs/
+
+To allow apache in other machines
+
+sudo ufw allow 'Apache'
+sudo ufw deny 'Apache'
+sudo ufw status
+
+
+
+
+
+
+
+Important while submitting project
+
+1. Change the value of $server_ip to $_SERVER['SERVER_ADDR'] in core.inc.php 
