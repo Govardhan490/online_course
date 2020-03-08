@@ -3,9 +3,19 @@
     require 'core.inc.php';
     require 'connect.inc.php';
 
-    echo "<script>
-    var flag = 0;
-    </script>";
+    echo "<script> var pass_reset; </script>";
+    echo "<script> var sign_up_success; </script>";
+
+    if(isset($_SESSION['password_reset']))
+    {
+        echo "<script> pass_reset = 1; </script>";
+        unset($_SESSION['password_reset']);
+    }
+    if(isset($_SESSION['sign_up_success']))
+    {
+        echo "<script> sign_up_success = 1;</script>";
+        unset($_SESSION['sign_up_success']);
+    }
 
     if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['role']))
     {
@@ -80,6 +90,9 @@
         <div class="card">
             <div class="card-header p-3" style="font-family: Amita;text-align:center;"><h1 class="display-4"><b><i>Online Course Portal</i></b></h1></div>
             <div class="card-body">
+                <div class="alert alert-success" id="success" style="display: none;">
+                    Sign Up Success!
+                </div>
                 <div class="alert alert-danger" id="alert" style="display: none;">
                     <strong>Error!</strong> Invalid Email or Password.
                 </div>
@@ -114,8 +127,6 @@
             </div>
         </div>
     </div>
-
-    
 </body>
 
 
@@ -141,6 +152,20 @@
 
     if(flag == 1){
         document.getElementById("alert").style.display = "block";
+    }
+
+    if(pass_reset == 1)
+    {
+        var reset = document.getElementById("success");
+        reset.innerHTML = "Password Reset Successfully!!";
+        reset.style.display = "block";
+    }
+
+    if(sign_up_success == 1)
+    {
+        var reset = document.getElementById("success");
+        reset.innerHTML = "Registered Successfully!!";
+        reset.style.display = "block";
     }
 </script>
 </html>

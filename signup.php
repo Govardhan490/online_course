@@ -2,14 +2,19 @@
 
     require 'core.inc.php';
     require 'connect.inc.php';
+    require 'phpmailer/PHPMailerAutoload.php';
+
+    echo "<script> var sign_up_fail; </script>";
+
+    if(isset($_SESSION['sign_up_fail']))
+    {
+        echo "<script> sign_up_fail = 1; </script>";
+        unset($_SESSION['sign_up_fail']);
+    }
 
     $email_flag = 0;
     $id_flag = 0;
     $success_flag = 0;
-
-    echo "<script>
-        var flag = 0;
-    </script>";
 
     if(isset($_POST['role']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['confirm_password']) && isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['unique_id']) && isset($_POST['phone_number'])){
         $role = $_POST['role'];
@@ -65,29 +70,41 @@
                             {
                                 $query1->close();
                                 $password_hash = md5($password);
-                                if($role == "admin")
+                                $rndno = rand(100000, 999999);
+                                $mail = new PHPMailer();
+                                $mail->isSMTP();
+                                $mail->SMTPAuth = true;
+                                $mail->SMTPSecure = 'ssl';
+                                $mail->Host = 'smtp.gmail.com';
+                                $mail->Port = '465';
+                                $mail->isHTML();
+                                $mail->Username = "onlinecourseportaldbms@gmail.com";
+                                $mail->Password = "nahb1212@M";
+                                $mail->setFrom("no-reply@onlinecourses.org");
+                                $mail->Subject = "No Reply";
+                                $mail->Body = "Your OTP for Registering is ".$rndno."\n Valid for 3 minutes";
+                                $mail->addAddress($email);
+                                echo "OK";
+                                if(!$mail->send())
                                 {
-                                    $query2 = $conn->prepare("INSERT INTO `administrator` VALUES (?,?,?,?,?,?)");
-                                    $query2->bind_param("ssssss",$unique_id,$first_name,$last_name,$email,$password_hash,$phone_num);   
-                                }
-                                else if($role == "faculty")
-                                {
-                                    $query2 = $conn->prepare("INSERT INTO `faculty` VALUES (?,?,?,?,?,?,?)");
-                                    $query2->bind_param("sssssss",$unique_id,$first_name,$last_name,$email,$password_hash,$phone_num,$credentials);
-                                }
-                                else if($role == "student")
-                                {    
-                                    $query2 = $conn->prepare("INSERT INTO `student` VALUES (?,?,?,?,?,?)");
-                                    $query2->bind_param("ssssss",$unique_id,$first_name,$last_name,$email,$password_hash,$phone_num);
-                                }
-                                if($query2->execute())
-                                {
-                                    echo "<script> flag = 5; </script>";
-                                    $success_flag = 1;
+                                    
+                                    echo "<script> flag = 4; </script>";
                                 }
                                 else
                                 {
-                                    echo "<script> flag = 4; </script>";
+                                    $_SESSION['sign_up'] = 1;
+                                    $_SESSION['otp'] = $rndno;
+                                    $_SESSION['role'] = $role;
+                                    $_SESSION['id'] = $unique_id;
+                                    $_SESSION['first_name'] = $first_name;
+                                    $_SESSION['last_name'] = $last_name;
+                                    $_SESSION['email'] = $email;
+                                    $_SESSION['password'] = $password_hash;
+                                    $_SESSION['phone_num'] = $phone_num;
+                                    if($role == "faculty")
+                                        $_SESSION['credentials'] = $credentials;
+                                    
+                                    header("Location:otp.php");
                                 }
                             }
                             else
@@ -133,9 +150,6 @@
         <div class="card">
             <div class="card-header p-3" style="font-family: Amita;text-align:center;"><h1 class="display-4"><b><i>Online Course Portal</i></b></h1></div>
             <div class="card-body">
-                <div class="alert alert-success" id="success" style="display: none;">
-                    Sign Up Success! <a href="/loginform.php">Login Now</a>
-                </div>
                 <div class="alert alert-danger" id="alert" style="display: none;">
                     <strong>Error!</strong> Passwords doesnt match
                 </div>
@@ -267,24 +281,24 @@
     $(document).ready(function(){
         if(flag != 0)
         {
-            if(flag <= 4)
-            {
-                var alert = document.getElementById("alert");
-                alert.style.display = "block";
-                if(flag == 1)
-                    alert.innerHTML = "<strong>Error!</strong> Passwords doesnt match";
-                else if(flag == 2)
-                    alert.innerHTML = "<strong>Error!</strong> Email already exits, Please try with different Email";
-                else if(flag == 3)
-                    alert.innerHTML = "<strong>Error!</strong> USN/SSN already exits, Please try with different USN/SSN";
-                else if(flag == 4)
-                    alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";
-            }
-            if(flag == 5)
-            {
-                var success = document.getElementById("success");
-                success.style.display = "block";
-            }
+            var alert = document.getElementById("alert");
+            alert.style.display = "block";
+            if(flag == 1)
+                alert.innerHTML = "<strong>Error!</strong> Passwords doesnt match";
+            else if(flag == 2)
+                alert.innerHTML = "<strong>Error!</strong> Email already exits, Please try with different Email";
+            else if(flag == 3)
+                alert.innerHTML = "<strong>Error!</strong> USN/SSN already exits, Please try with different USN/SSN";
+            else if(flag == 4)
+                alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";        
+        }
+
+        if(sign_up_fail == 1)
+        {
+            var alert = document.getElementById("alert");
+            alert.style.display = "block";
+            alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";        
+
         }
     });
 </script>
