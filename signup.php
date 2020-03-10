@@ -4,6 +4,9 @@
     require 'connect.inc.php';
     require 'phpmailer/PHPMailerAutoload.php';
 
+    if(loggedin())
+        header("Location:index.php");
+
     echo "<script> var sign_up_fail; </script>";
 
     if(isset($_SESSION['sign_up_fail']))
@@ -40,13 +43,14 @@
             else
             {
                 if($role == "admin")
-                    $query = $conn->prepare("SELECT `email` FROM `administrator` WHERE `email` = ?"); 
+                    $query = $conn->prepare("SELECT `email` FROM `administrator` WHERE LOWER(`email`) = ?"); 
                 else if($role == "faculty")
-                    $query = $conn->prepare("SELECT `email` FROM `faculty` WHERE `email` = ?");
+                    $query = $conn->prepare("SELECT `email` FROM `faculty` WHERE LOWER(`email`) = ?");
                 else if($role == "student")
-                    $query = $conn->prepare("SELECT `email` FROM `student` WHERE `email` = ?");
+                    $query = $conn->prepare("SELECT `email` FROM `student` WHERE LOWER(`email`) = ?");
 
-                $query->bind_param("s",$email);
+                $email_lower = strtolower($email);   
+                $query->bind_param("s",$email_lower);
 
                 if($query->execute())
                 {
@@ -55,13 +59,14 @@
                     {
                         $query->close();
                         if($role == "admin")
-                            $query1 = $conn->prepare("SELECT `admin_id` FROM `administrator` WHERE `admin_id` = ?");   
+                            $query1 = $conn->prepare("SELECT `admin_id` FROM `administrator` WHERE LOWER(`admin_id`) = ?");   
                         else if($role == "faculty")
-                            $query1 = $conn->prepare("SELECT `faculty_id` FROM `faculty` WHERE `faculty_id` = ?");
+                            $query1 = $conn->prepare("SELECT `faculty_id` FROM `faculty` WHERE LOWER(`faculty_id`) = ?");
                         else if($role == "student")
-                            $query1 = $conn->prepare("SELECT `usn` FROM `student` WHERE `usn` = ?");
+                            $query1 = $conn->prepare("SELECT `usn` FROM `student` WHERE LOWER(`usn`) = ?");
 
-                        $query1->bind_param("s",$unique_id);
+                        $unique_id_lower = strtolower($unique_id);    
+                        $query1->bind_param("s",$unique_id_lower);
 
                         if($query1->execute())
                         {
@@ -78,24 +83,24 @@
                                 $mail->Host = 'smtp.gmail.com';
                                 $mail->Port = '465';
                                 $mail->isHTML();
-                                $mail->Username = "onlinecourseportaldbms@gmail.com";
-                                $mail->Password = "nahb1212@M";
+                                $mail->Username = "";
+                                $mail->Password = "";
                                 $mail->setFrom("no-reply@onlinecourses.org");
                                 $mail->Subject = "No Reply";
                                 $mail->Body = "Your OTP for Registering is ".$rndno."\n Valid for 3 minutes";
                                 $mail->addAddress($email);
-                                echo "OK";
-                                if(!$mail->send())
+                                if(!($mail->send()))
                                 {
                                     
+                                    echo "there is something error\n";
                                     echo "<script> flag = 4; </script>";
                                 }
                                 else
                                 {
                                     $_SESSION['sign_up'] = 1;
                                     $_SESSION['otp'] = $rndno;
-                                    $_SESSION['role'] = $role;
-                                    $_SESSION['id'] = $unique_id;
+                                    $_SESSION['role_sign_up'] = $role;
+                                    $_SESSION['id_sign_up'] = $unique_id;
                                     $_SESSION['first_name'] = $first_name;
                                     $_SESSION['last_name'] = $last_name;
                                     $_SESSION['email'] = $email;

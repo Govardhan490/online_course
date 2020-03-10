@@ -19,3 +19,4 @@ sudo ufw status
 Important while submitting project
 
 1. Change the value of $server_ip to $_SERVER['SERVER_ADDR'] in core.inc.php 
+2. Add Email and Password in signup.php and forgot_password.php

@@ -3,6 +3,9 @@
     require 'core.inc.php';
     require 'connect.inc.php';
 
+    if(loggedin())
+        header("Location:index.php");
+
     echo "<script> var pass_reset; </script>";
     echo "<script> var sign_up_success; </script>";
 
@@ -25,15 +28,16 @@
         $role = $_POST['role'];
         if(!empty($email) && !empty($password) && !empty($role)){
             if($role == "admin"){
-                $query = $conn->prepare("SELECT `admin_id` FROM `administrator` WHERE `email`= ? AND `password` = ? ");
+                $query = $conn->prepare("SELECT `admin_id`,`first_name`,`last_name`,`email`,`phone_no` FROM `administrator` WHERE LOWER(`email`)= ? AND `password` = ? ");
             }
             else if($role == "faculty"){
-                $query = $conn->prepare("SELECT `faculty_id` FROM `faculty` WHERE `email`= ? AND `password` = ? ");
+                $query = $conn->prepare("SELECT `faculty_id`,`first_name`,`last_name`,`email`,`phone_no`,`credentials` FROM `faculty` WHERE LOWER(`email`)= ? AND `password` = ? ");
             }
             else if($role == "student"){
-                $query = $conn->prepare("SELECT `usn` FROM `student` WHERE `email`= ? AND `password` = ? ");
+                $query = $conn->prepare("SELECT `usn`,`first_name`,`last_name`,`email`,`phone_no` FROM `student` WHERE LOWER(`email`) = ? AND `password` = ? ");
             }
-            $query->bind_param("ss",$email,$password_hash);
+            $email_lower = strtolower($email);
+            $query->bind_param("ss",$email_lower,$password_hash);
             if($query->execute()){
                 $query->store_result();
                 if($query->num_rows() != 1){
@@ -42,7 +46,10 @@
                     </script>";
                 }
                 else{
-                    $query->bind_result($id);
+                    if($role == "faculty")
+                        $query->bind_result($id,$first_name,$last_name,$email,$phone_num,$credentials);
+                    else
+                        $query->bind_result($id,$first_name,$last_name,$email,$phone_num);
                     $query->fetch();
                     echo "<script>
                         flag = 0;
@@ -55,9 +62,26 @@
                     {
                         $_SESSION['id'] = $id;
                     }
-                    echo $_SESSION['role'];
-                    echo $_SESSION['id'];
-                    var_dump($_SESSION);
+                    if(!isset($_SESSION['first_name'] ))
+                    {
+                        $_SESSION['first_name'] = $first_name;
+                    }
+                    if(!isset($_SESSION['last_name'] ))
+                    {
+                        $_SESSION['last_name'] = $last_name;
+                    }
+                    if(!isset($_SESSION['email'] ))
+                    {
+                        $_SESSION['email'] = $email;
+                    }
+                    if(!isset($_SESSION['phone_no'] ))
+                    {
+                        $_SESSION['phone_no'] = $phone_num;
+                    }
+                    if( $role == "faculty" && !isset($_SESSION['credentials'] ))
+                    {
+                        $_SESSION['credentials'] = $credentials;
+                    }
                     if(loggedin())
                     {
                         header("Location:".$role."_home.php");

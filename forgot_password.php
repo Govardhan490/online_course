@@ -4,6 +4,9 @@
     require 'connect.inc.php';
     require 'phpmailer/PHPMailerAutoload.php';
 
+    if(loggedin())
+        header("Location:index.php");
+
     if(isset($_POST['email']) && isset($_POST['role']))
     {
         $role = trim($_POST['role']);
@@ -11,12 +14,13 @@
         if(!empty($role) && !empty($email))
         {
             if($role == "admin")
-                $query = $conn->prepare("SELECT `email` from `administrator` WHERE `email` = ?");
+                $query = $conn->prepare("SELECT `email` from `administrator` WHERE LOWER(`email`) = ?");
             else if($role == "faculty")
-                $query = $conn->prepare("SELECT `email` from `faculty` WHERE `email` = ?");
+                $query = $conn->prepare("SELECT `email` from `faculty` WHERE LOWER(`email`) = ?");
             else if($role == "student")
-                $query = $conn->prepare("SELECT `email` from `student` WHERE `email` = ?");
-            $query->bind_param("s",$email);
+                $query = $conn->prepare("SELECT `email` from `student` WHERE LOWER(`email`) = ?");
+            $email_lower = strtolower($email);
+            $query->bind_param("s",$email_lower);
             if($query->execute())
             {
                 $query->store_result();
@@ -30,8 +34,8 @@
                     $mail->Host = 'smtp.gmail.com';
                     $mail->Port = '465';
                     $mail->isHTML();
-                    $mail->Username = "onlinecourseportaldbms@gmail.com";
-                    $mail->Password = "nahb1212@M";
+                    $mail->Username = "";
+                    $mail->Password = "";
                     $mail->setFrom("no-reply@onlinecourses.org");
                     $mail->Subject = "No Reply";
                     $mail->Body = "Your OTP for Password Reset is ".$rndno." \n Valid for 3 minutes";

@@ -4,7 +4,7 @@
     require 'connect.inc.php';
 
     if(!loggedin()){
-        header("Location:http://".$server_ip."/loginform.php");
+        header("Location:loginform.php");
         exit();
     }
     else if($_SESSION['role'] == "admin"){
@@ -19,5 +19,4 @@
         header("Location:http://".$server_ip."/student_home.php");
         exit();
     }
-
 ?>

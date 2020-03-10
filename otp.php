@@ -27,8 +27,8 @@
                 { 
                     unset($_SESSION['otp']);
                     unset($_SESSION['sign_up']);
-                    $role = $_SESSION['role']; 
-                    $unique_id = $_SESSION['id'];
+                    $role = $_SESSION['role_sign_up']; 
+                    $unique_id = $_SESSION['id_sign_up'];
                     $first_name = $_SESSION['first_name'];
                     $last_name = $_SESSION['last_name'];
                     $email = $_SESSION['email'];
@@ -99,6 +99,7 @@
                     </div>
                     <br>
                     <button type="submit" class="btn btn-primary">Submit</button>
+                    <input type="button" value="Cancel" class="btn btn-primary" style="background-color: red;" onclick="time_out()">
                 </form>
             </div>
         </div>
