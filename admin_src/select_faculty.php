@@ -1,10 +1,10 @@
 <?php
 
-    require 'core.inc.php';
-    require 'connect.inc.php';
+    require '../core.inc.php';
+    require '../connect.inc.php';
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
-        header("Location:index.php");
+        header("Location:../index.php");
 
     if(isset($_GET['id']))
     {

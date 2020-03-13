@@ -84,7 +84,8 @@
                     }
                     if(loggedin())
                     {
-                        header("Location:".$role."_home.php");
+                        echo "Ok";
+                        header("Location:/".$role."_src/".$role."_home.php");
                         exit();
                     }
                 }

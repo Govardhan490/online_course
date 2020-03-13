@@ -1,10 +1,10 @@
 <?php
 
-    require 'core.inc.php';
-    require 'connect.inc.php';
+    require '../core.inc.php';
+    require '../connect.inc.php';
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
-        header("Location:index.php");
+        header("Location:../index.php");
 
     echo "<script> var no_course = 0; </script>";
 ?>
@@ -20,13 +20,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.structure.css">
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.theme.css">
-    <script src="jquery-ui/jquery-ui.js"></script>
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.css">
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.structure.css">
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
+    <script src="../jquery-ui/jquery-ui.js"></script>
+    <style>
+        #accordion_first .ui-accordion-content {
+            max-height: 350px;
+        }
+    </style>
 </head>
 <body  style="background-color: rgb(255, 255, 128);">
-    <div class="container-fluid p-5">
+    <div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
                 <h1 style="font-family: Amita;"><b><i>Courses</i></b></h1>
@@ -37,7 +42,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row">
+            <div class="card-body row" style="height: 610px;">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action active" >View Created Course</a>
@@ -71,8 +76,9 @@
 
 <?php
 
-    $query = $conn->prepare("SELECT * FROM `course` WHERE `admin_id` = ?");
+    $query = $conn->prepare("SELECT * FROM `course` WHERE `admin_id` = ? AND `faculty_id` IS NULL");
     $query->bind_param("s",$_SESSION['id']);
+    $rows = -1;
     if($query->execute())
     {
         $result = $query->get_result();  
@@ -83,20 +89,52 @@
             for($i = 0;$i<$rows;$i++)
             {
                 $data = $result->fetch_assoc();
-                if($data['faculty_id'] == "")
-                    $faculty_id = "<span style='color:red;'>Not assigned yet<span>";
-                else
-                    $faculty_id = $data['faculty_id'];
-                if($data['course_name'][strlen($data['course_name'])-1] == "\n")
-                    $course_name = substr($data['course_name'],0,strlen($data['course_name'])-1);
-                else   
-                    $course_name = $data['course_name'];
-                echo "$('#accordion_first').append(\"<div class='accordion'><div id='$data[course_id]' class='course_value'>$data[course_name] ($data[course_id])</div><div><ul class='list-group'><li class='list-group-item'>Description : $data[course_description]</li><li class='list-group-item'>Faculty ID : $faculty_id</li></ul></div></div>\");\n";
+                $course_name = replace_newline($data['course_name']);
+                $course_id = replace_newline($data['course_id']);
+                $course_description = replace_newline($data['course_description']);
+                $faculty_id = "<span style='color:red;'>Not assigned yet<span>";
+                $faculty_id = replace_newline($faculty_id);
+                echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div><ul class='list-group'><li class='list-group-item'>Description : $course_description</li><li class='list-group-item'>Faculty ID : $faculty_id</li></ul></div>\");\n"; 
             }
             echo "\n});</script>";
         }
-        else{
-            echo "<script> var no_course = 1; </script>";
+        else
+        {
+            $rows = 0;
+        }
+        $query2 = $conn->prepare("SELECT `course`.`course_id`,`course`.`faculty_id`,`course`.`course_name`,`course`.`course_description`,`faculty`.`first_name`,`faculty`.`last_name`,`faculty`.`email`,`faculty`.`phone_no`,`faculty`.`credentials` FROM `course` INNER JOIN `faculty` ON `course`.`faculty_id` = `faculty`.`faculty_id` AND `course`.`admin_id` = ?");
+        $query2->bind_param("s",$_SESSION['id']);
+        if($query2->execute())
+        {
+            $query2->store_result();
+            if($query2->num_rows > 0)
+            {
+                $query2->bind_result($course_id,$faculty_id,$course_name,$course_description,$faculty_first_name,$faculty_last_name,$faculty_email,$faculty_phone_no,$faculty_credentials);
+                echo "<script> $(document).ready(function(){\n";
+                while($query2->fetch())
+                {
+                    $course_id = replace_newline($course_id);
+                    $faculty_id = replace_newline($faculty_id);
+                    $course_name = replace_newline($course_name);
+                    $course_description = replace_newline($course_description);
+                    $faculty_first_name = replace_newline($faculty_first_name);
+                    $faculty_last_name = replace_newline($faculty_last_name);
+                    $faculty_email = replace_newline($faculty_email);
+                    $faculty_phone_no = replace_newline($faculty_phone_no);
+                    $faculty_credentials = replace_newline($faculty_credentials);
+                    echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div><ul class='list-group'><li class='list-group-item'>Description : $course_description</li><li class='list-group-item'>Faculty ID : $faculty_id</li><li class='list-group-item'>Faculty Name : $faculty_first_name $faculty_last_name</li><li class='list-group-item'>Faculty Email : $faculty_email</li><li class='list-group-item'>Faculty Phone No : $faculty_phone_no</li><li class='list-group-item'>Faculty Credentials : $faculty_credentials</li></ul></div>\");\n";
+                }
+                echo "\n});</script>";
+            }
+            else
+            {
+                if($rows == 0)
+                echo "<script> var no_course = 1; </script>";
+            }
+        }    
+        else
+        {
+            echo "<script> flag = 1; </script>";
         }
     }
     else
@@ -123,11 +161,11 @@
         $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $(".course_value").filter(function() {
-                $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
 
-        $( ".accordion" ).accordion({
+        $( "#accordion_first" ).accordion({
             collapsible:true,
             active:false,
             heightStyle:true

@@ -8,15 +8,15 @@
         exit();
     }
     else if($_SESSION['role'] == "admin"){
-        header("Location:http://".$server_ip."/admin_home.php");
+        header("Location:/admin_src/admin_home.php");
         exit();
     }
     else if($_SESSION['role'] == "faculty"){
-        header("Location:http://".$server_ip."/faculty_home.php");
+        header("Location:/faculty_src/faculty_home.php");
         exit();
     }
     else if($_SESSION['role'] == "student"){
-        header("Location:http://".$server_ip."/student_home.php");
+        header("Location:/student_src/student_home.php");
         exit();
     }
 ?>

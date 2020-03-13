@@ -76,23 +76,9 @@
                                 $query1->close();
                                 $password_hash = md5($password);
                                 $rndno = rand(100000, 999999);
-                                $mail = new PHPMailer();
-                                $mail->isSMTP();
-                                $mail->SMTPAuth = true;
-                                $mail->SMTPSecure = 'ssl';
-                                $mail->Host = 'smtp.gmail.com';
-                                $mail->Port = '465';
-                                $mail->isHTML();
-                                $mail->Username = "";
-                                $mail->Password = "";
-                                $mail->setFrom("no-reply@onlinecourses.org");
-                                $mail->Subject = "No Reply";
-                                $mail->Body = "Your OTP for Registering is ".$rndno."\n Valid for 3 minutes";
-                                $mail->addAddress($email);
+                                /*mail info*/
                                 if(!($mail->send()))
                                 {
-                                    
-                                    echo "there is something error\n";
                                     echo "<script> flag = 4; </script>";
                                 }
                                 else

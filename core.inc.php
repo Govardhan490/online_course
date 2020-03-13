@@ -6,7 +6,7 @@ session_start();
 $current_file = $_SERVER['SCRIPT_NAME'];
 $server_ip = "localhost";
 if(!loggedin() && (isset($_SESSION['otp']) || isset($_SESSION[''])) && $current_file!="/otp.php" && $current_file!='/logout.php'){
-    header("Location:http://".$server_ip."/otp.php");
+    header("Location:/otp.php");
     exit();
 }
 else if(!loggedin() && isset($_SESSION['authentication']) && $current_file!="/reset_password.php"){
@@ -22,6 +22,12 @@ function loggedin(){
     else{
         return false;
     }
+}
+
+function replace_newline($var)
+{   
+    $var = str_replace ( array("\r\n", "\r", "\n"), "<br>", $var);
+    return $var;
 }
 
 ?>

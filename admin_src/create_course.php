@@ -1,10 +1,10 @@
 <?php
 
-    require 'core.inc.php';
-    require 'connect.inc.php';
+    require '../core.inc.php';
+    require '../connect.inc.php';
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
-        header("Location:index.php");
+        header("Location:../index.php");
     
     if(isset($_POST['course_id']) && isset($_POST['course_name']) && isset($_POST['course_description']))
     {
@@ -25,6 +25,13 @@
                 $query1->bind_param("ssss",$course_id,$_SESSION['id'],$course_name,$course_description);
                 if($query1->execute())
                 {
+                    if ( !file_exists( "../courses" ) && !is_dir( "../courses" ) ) 
+                    {
+                        mkdir( $dir,0777,true);
+                        chmod("../courses",0777);       
+                    }
+                    mkdir("../courses/$course_id",0777,true);
+                    chmod("../courses/$course_id",0777);
                     $_SESSION['course_creation_success'] = 1;
                     header("Location:admin_home.php");
                 }
@@ -61,7 +68,7 @@
     <link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
 </head>
 <body style="background-color: rgb(255, 255, 128);">
-<div class="container-fluid p-5">
+<div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
                 <h1 style="font-family: Amita;"><b><i>Create Course</i></b></h1>
@@ -72,7 +79,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row">
+            <div class="card-body row" style="height: 610px;">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action active">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>

@@ -1,10 +1,10 @@
 <?php
 
-    require 'core.inc.php';
-    require 'connect.inc.php';
+    require '../core.inc.php';
+    require '../connect.inc.php';
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
-        header("Location:index.php");
+        header("Location:../index.php");
     
     echo "<script> var success_flag = 0;</script>";
 
@@ -31,7 +31,7 @@
     <link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
 </head>
 <body style="background-color: rgb(255, 255, 128);">
-<div class="container-fluid p-5">
+<div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
                 <h1 style="font-family: Amita;"><b><i>Admin Home Page</i></b></h1>
@@ -42,7 +42,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="height: 610px;">
                 <div class="alert alert-success" id="success" style="display: none;">
                     <strong>Oops!</strong> Some Error happened please refresh the page; 
                 </div>

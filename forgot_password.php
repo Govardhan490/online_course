@@ -26,32 +26,7 @@
                 $query->store_result();
                 if($query->num_rows() == 1)
                 {
-                    $rndno = rand(100000, 999999);
-                    $mail = new PHPMailer();
-                    $mail->isSMTP();
-                    $mail->SMTPAuth = true;
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Host = 'smtp.gmail.com';
-                    $mail->Port = '465';
-                    $mail->isHTML();
-                    $mail->Username = "";
-                    $mail->Password = "";
-                    $mail->setFrom("no-reply@onlinecourses.org");
-                    $mail->Subject = "No Reply";
-                    $mail->Body = "Your OTP for Password Reset is ".$rndno." \n Valid for 3 minutes";
-                    $mail->addAddress("$email");
-                    if($mail->send())
-                    {
-                        $_SESSION['otp'] = $rndno;
-                        $_SESSION['forgot_password'] = 1;
-                        $_SESSION['forgot_user_name'] = $email;
-                        $_SESSION['forgot_role'] = $role;
-                        header("Location:otp.php");
-                    }
-                    else
-                    {
-                        echo "<script> flag = 2 </script>";
-                    }
+                    /*Send the Mail*/
                 }
                 else
                 {

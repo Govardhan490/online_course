@@ -1,10 +1,10 @@
 <?php
 
-    require 'core.inc.php';
-    require 'connect.inc.php';
+    require '../core.inc.php';
+    require '../connect.inc.php';
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
-        header("Location:index.php");
+        header("Location:../index.php");
 
     echo "<script> var no_course = 0; var success_flag=-1; </script>";
 
@@ -28,17 +28,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.structure.css">
-    <link rel="stylesheet" href="jquery-ui/jquery-ui.theme.css">
-    <script src="jquery-ui/jquery-ui.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.css">
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.structure.css">
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
+    <script src="../jquery-ui/jquery-ui.js"></script>
+    <style>
+        #accordion_first .ui-accordion-content {
+            max-height: 350px;
+        }
+    </style>
 </head>
 <body  style="background-color: rgb(255, 255, 128);">
-    <div class="container-fluid p-5">
+    <div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
-                <h1 style="font-family: Amita;"><b><i>Assign Faculty</i></b></h1>
+            <h1 style="font-family: Amita;"><b><i>Assign Faculty</i></b></h1>
                 <button type="button" onclick="time_out()" class="btn btn-danger" style="float: right;">Log Out</button>
                 <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
                     <li class="col-sm-3 list-group-item"><b>Name : </b><?php if(isset($_SESSION['first_name']) && isset($_SESSION['last_name'])){echo $_SESSION['first_name']." ".$_SESSION['last_name'];} ?></li>
@@ -46,7 +51,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row">
+            <div class="card-body row" style="height: 610px;">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
@@ -89,6 +94,7 @@
     {
         $result = $query->get_result();  
         $rows = $result->num_rows;
+        $courses = array();
         if($rows > 0)
         {    
             echo "<script> $(document).ready(function(){\n";
@@ -99,6 +105,9 @@
                     $faculty_id = "<span style='color:red;'>Not assigned yet<span>";
                 else
                     $faculty_id = $data['faculty_id'];
+                $course_name = replace_newline($data['course_name']);
+                $course_id = replace_newline($data['course_id']);
+                $courses[$course_id] = 0;
                 echo "$('#accordion').append(\"<div class='course_value'>$data[course_name] ($data[course_id])</div><div class='course_description' id='$data[course_id]_applied'></div>\");\n";
             }
             echo "\n});</script>";
@@ -113,13 +122,28 @@
                     echo "<script> $(document).ready(function(){\n";
                     while($query1->fetch())
                     {
-                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ".$credentials." </li><li class='list-group-item'><b>Phone No</b>&nbsp;&nbsp;&nbsp;  : ".$phone_no."</li><li class='list-group-item'><b>Email</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."_".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
+                        $faculty_id = replace_newline($faculty_id);
+                        $course_id = replace_newline($course_id);
+                        $courses[$course_id] += 1;
+                        $first_name = replace_newline($first_name);
+                        $last_name = replace_newline($last_name);
+                        $credentials = replace_newline($credentials);
+                        $course_name = replace_newline($course_name);
+                        $phone_no = replace_newline($phone_no);
+                        $email = replace_newline($email);
+                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ". "$credentials"." </li><li class='list-group-item'><b>Phone No</b>&nbsp;&nbsp;&nbsp;  : ".$phone_no."</li><li class='list-group-item'><b>Email</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."_".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
                     }
                     echo "\n});</script>";
                 }
-                else
-                {
-                    echo "<script></script>";
+                foreach($courses as $x => $x_value) {
+                    if($x_value == 0)
+                    {
+                        echo "<script>$(document).ready(function(){\n$('#".$x."_applied').append(\"<div class='alert alert-info'>No faculty has applied yet </div>\");\n}); </script>";
+                    }
+                    else
+                    {
+                        echo "<script>$(document).ready(function(){\n $( '#".$x."_applied' ).accordion({collapsible:true,active:false,heightStyle:true}); \n}); </script>";
+                    }
                 }
             }
             else{
@@ -167,7 +191,7 @@
     function selectFaculty(id)
     {
         var ip = '<?php echo $server_ip; ?>';
-        window.location.href = 'http://'+ip+'/select_faculty.php?id='+id;
+        window.location.href = 'http://'+ip+'/admin_src/select_faculty.php?id='+id;
     }
 
     $(document).ready(function(){
@@ -178,12 +202,6 @@
             });
         });
         $( "#accordion" ).accordion({
-            collapsible:true,
-            active:false,
-            heightStyle:true
-
-        });
-        $( ".course_description" ).accordion({
             collapsible:true,
             active:false,
             heightStyle:true
