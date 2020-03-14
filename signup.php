@@ -76,7 +76,7 @@
                                 $query1->close();
                                 $password_hash = md5($password);
                                 $rndno = rand(100000, 999999);
-                                /*mail info*/
+                                /*Mail Info*/
                                 if(!($mail->send()))
                                 {
                                     echo "<script> flag = 4; </script>";

@@ -88,7 +88,7 @@
                 $faculty_email = replace_newline($faculty_email);
                 $faculty_phone_no = replace_newline($faculty_phone_no);
                 $submit_value = $course_id."_".$faculty_id."_".$course_name."_".$faculty_first_name." ".$faculty_last_name;
-                echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div><ul class='list-group'><li class='list-group-item'>Faculty ID : $faculty_id</li><li class='list-group-item'>Faculty Name : $faculty_first_name $faculty_last_name</li><li class='list-group-item'>Faculty Email : $faculty_email</li><li class='list-group-item'>Faculty Phone No : $faculty_phone_no</li></ul><div align='right'><br><form method='POST' action='af_ind_interact.php'><button type='submit' class='btn btn-success' name='interact' value='$submit_value'>Interact</button></div></form></div>\");\n";
+                echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div><ul class='list-group'><li class='list-group-item'>Faculty ID : $faculty_id</li><li class='list-group-item'>Faculty Name : $faculty_first_name $faculty_last_name</li><li class='list-group-item'>Faculty Email : $faculty_email</li><li class='list-group-item'>Faculty Phone No : $faculty_phone_no</li></ul><div align='right'><br><form method='POST' action='af_ind_interact.php'><button type='submit' class='btn btn-success' name='interact' value='$submit_value'>Interact</button></form></div></div>\");\n";
             }
             echo "\n});</script>";
         }
@@ -121,7 +121,8 @@
         $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $(".course_value").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                $("#accordion_first").accordion({active:false});
             });
         });
 

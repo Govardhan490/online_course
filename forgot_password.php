@@ -26,7 +26,20 @@
                 $query->store_result();
                 if($query->num_rows() == 1)
                 {
-                    /*Send the Mail*/
+                    $rndno = rand(100000, 999999);
+                    /*Mail Info*/
+                    if($mail->send())
+                    {
+                        $_SESSION['otp'] = $rndno;
+                        $_SESSION['forgot_password'] = 1;
+                        $_SESSION['forgot_user_name'] = $email;
+                        $_SESSION['forgot_role'] = $role;
+                        header("Location:otp.php");
+                    }
+                    else
+                    {
+                        echo "<script> flag = 2 </script>";
+                    }
                 }
                 else
                 {

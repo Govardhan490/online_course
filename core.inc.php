@@ -3,6 +3,7 @@
 ob_start();
 session_start();
 
+
 $current_file = $_SERVER['SCRIPT_NAME'];
 $server_ip = "localhost";
 if(!loggedin() && (isset($_SESSION['otp']) || isset($_SESSION[''])) && $current_file!="/otp.php" && $current_file!='/logout.php'){
@@ -14,6 +15,22 @@ else if(!loggedin() && isset($_SESSION['authentication']) && $current_file!="/re
     exit();
 }
 echo "<script> var flag = 0 </script>";
+
+if(isset($_SESSION['interact_faculty_id']) && ($current_file!="/admin_src/af_ind_interact.php" &&  $current_file!="/admin_src/af_interact_3.php"))
+{
+    unset($_SESSION['interact_course_id']);
+    unset($_SESSION['interact_faculty_id']);
+    unset($_SESSION['interact_course_name']);
+    unset($_SESSION['interact_faculty_name']); 
+}
+
+if(isset($_SESSION['interact_usn']) && ($current_file!="/admin_src/as_interact_2.php" &&  $current_file!="/admin_src/as_interact_3.php"))
+{
+    unset($_SESSION['interact_course_id']);
+    unset($_SESSION['interact_usn']);
+    unset($_SESSION['interact_course_name']);
+    unset($_SESSION['interact_student_name']); 
+}
 
 function loggedin(){
     if(isset($_SESSION['role']) && isset($_SESSION['id']) && !empty($_SESSION['role']) && !empty($_SESSION['id'])){
@@ -29,5 +46,4 @@ function replace_newline($var)
     $var = str_replace ( array("\r\n", "\r", "\n"), "<br>", $var);
     return $var;
 }
-
 ?>

@@ -5,7 +5,6 @@
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
         header("Location:../index.php");
     
-
     if(isset($_POST['interact']))
     {
         $value = explode("_",$_POST['interact']);
@@ -14,64 +13,24 @@
         $_SESSION['interact_course_name'] = $value[2];
         $_SESSION['interact_faculty_name'] = $value[3];
     }
-
-    if(isset($_POST['filetype']) && (isset($_POST['message']) || isset($_POST['file'])))
+    echo "<script> var flag = 0; </script>";
+    echo "<script> var invalid_file = 0; </script>";
+    if(isset($_SESSION['invalid_file']))
     {
-        if($_POST['filetype'] == 'message')
+        if($_SESSION['invalid_file'] == 1)
         {
-            $interact_flag = 0;
-            $interact_type = "text";
-            $query0 = $conn->prepare("INSERT INTO `fa_interact` (`course_id`,`admin_id`,`faculty_id`,`message`,`msg_type`,`flag`) VALUES (?,?,?,?,?,?)");
-            $query0->bind_param("sssssi",$_SESSION['interact_course_id'],$_SESSION['id'],$_SESSION['interact_faculty_id'],$_POST['message'],$interact_type,$interact_flag);
-            if(!$query0->execute())
-            {
-                echo "<script> var invalid_file = 3; </script>";
-            }
+            echo "<script> var invalid_file = 1; </script>";
         }
-        else
+        else if($_SESSION['invalid_file'] == 2)
         {
-            $name = $_FILES['file']['name'];
-            $type = $_FILES['file']['type'];
-            $size = $_FILES['file']['size'];
-            if($size < 40000000)
-            {
-                if(preg_match("/image/", $type) || preg_match("/pdf/",$type) || preg_match("/msword/",$type))
-                {
-                    $x = rand(11111,99999);
-                    $name = $x.$name;
-                    $dir = "../courses/".$_SESSION['interact_course_id']."/fa_interact";
-                    if ( !file_exists( $dir ) && !is_dir( $dir ) ) 
-                    {
-                        mkdir( $dir,0777,true);       
-                    } 
-                    $target_file = "../courses/".$_SESSION['interact_course_id']."/fa_interact/".$name;
-                    if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) 
-                    {
-                        $interact_flag = 0;
-                        $query1 = $conn->prepare("INSERT INTO `fa_interact` (`course_id`,`admin_id`,`faculty_id`,`message`,`msg_type`,`flag`) VALUES (?,?,?,?,?,?)");
-                        $query1->bind_param("sssssi",$_SESSION['interact_course_id'],$_SESSION['id'],$_SESSION['interact_faculty_id'],$name,$type,$interact_flag);
-                        if(!$query1->execute())
-                        {
-                            echo "<script> var invalid_file = 3; </script>";
-                        }
-                    } 
-                    else 
-                    {
-                        echo "<script> var invalid_file = 3; </script>";
-                    }
-                }
-                else
-                {
-                    echo "<script> var invalid_file = 2; </script>";
-                }
-            }
-            else
-            {
-                echo "<script> var invalid_file = 1; </script>";
-            }
+            echo "<script> var invalid_file = 2; </script>";
         }
+        else if($_SESSION['invalid_file'] == 3)
+        {
+            echo "<script> var invalid_file = 3; </script>";
+        }
+        unset($_SESSION['invalid_file']);
     }
-    $_POST = array();
 
 ?>
 
@@ -123,10 +82,10 @@
                         <li class="col-sm-4 list-group-item"><b>Faculty Name : </b><?php if(isset($_SESSION['interact_faculty_name'])){echo $_SESSION['interact_faculty_name'];} ?></li>
                         <li class="col-sm-5 list-group-item"><b>Course Name : </b><?php if(isset($_SESSION['interact_course_name'])){echo $_SESSION['interact_course_name'];} ?></li>
                     </ul>
-                    <div class="card" style="overflow:scroll;height: 65%;background-color:rgb(255, 255, 210);" id="chats">
+                    <div class="card" style="overflow:scroll;height: 60%;background-color:rgb(255, 255, 210);" id="chats">
                     </div>
                     <br>
-                    <form action="af_ind_interact.php" method="post" enctype="multipart/form-data">
+                    <form action="af_interact_3.php" method="post" onsubmit="return filesize_validate()" enctype="multipart/form-data">
                         <div class="custom-control custom-radio custom-control-inline">
                             <input onclick="showForm(0)" checked type="radio" class="custom-control-input" id="customRadio" name="filetype" value="message" required>
                             <label class="custom-control-label" for="customRadio">Text Message</label>
@@ -203,6 +162,29 @@
         window.location.href = 'http://'+ip+'/logout.php'; 
     }
 
+    function filesize_validate()
+    {
+        const fi = document.getElementById('file'); 
+        if (fi.files.length > 0) 
+        { 
+            for (const i = 0; i <= fi.files.length - 1; i++) 
+            { 
+                const fsize = fi.files.item(i).size; 
+                const file = Math.round((fsize / 1024));  
+                if (file >= 40000) 
+                { 
+                    document.getElementById("invalid_file").style.display = "block";
+                    document.getElementById("invalid_file").innerHTML = "File size should be less than 40MB";
+                    return false;
+                } 
+                else 
+                { 
+                    return true;
+                } 
+            } 
+        } 
+    }
+
     function showForm(x)
     {
         if(x == 0)
@@ -232,14 +214,14 @@
     if(invalid_file == 1)
     {
         document.getElementById("invalid_file").style.display = "block";
-        document.getElementById("invalid_file").innerHTML = "File size should be less than 20MB";
+        document.getElementById("invalid_file").innerHTML = "File size should be less than 35MB";
     }
     else if(invalid_file == 2)
     {
         document.getElementById("invalid_file").style.display = "block";
-        document.getElementById("invalid_file").innerHTML = "Only Image, Pdfs and Doc files are allowed";
+        document.getElementById("invalid_file").innerHTML = "Only Image,Pdfs,Doc,Audio and Video files are allowed";
     }
-    else if(invalid_file == 2)
+    else if(invalid_file == 3)
     {
         document.getElementById("invalid_file").style.display = "block";
         document.getElementById("invalid_file").innerHTML = "Sorry Some error occurred try again";

@@ -183,7 +183,8 @@
         $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $(".course_value").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                $("#accordion_first").accordion({active:false});
             });
         });
 
