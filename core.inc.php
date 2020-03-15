@@ -44,6 +44,8 @@ function loggedin(){
 function replace_newline($var)
 {   
     $var = str_replace ( array("\r\n", "\r", "\n"), "<br>", $var);
+    if(substr($var,strlen($var)-4,strlen($var)-1) == '<br>')
+        $var = substr($var,0,strlen($var)-4);
     return $var;
 }
 ?>

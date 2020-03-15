@@ -24,6 +24,11 @@
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.structure.css">
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
     <script src="../jquery-ui/jquery-ui.js"></script>
+    <style>
+        #accordion_first .ui-accordion-content {
+            max-height: 350px;
+        }
+    </style>
 </head>
 <body  style="background-color: rgb(255, 255, 128);">
     <div class="container-fluid pt-1">

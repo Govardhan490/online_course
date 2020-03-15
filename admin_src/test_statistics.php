@@ -24,12 +24,17 @@
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.structure.css">
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
     <script src="../jquery-ui/jquery-ui.js"></script>
+    <style>
+        #accordion_first .ui-accordion-content, .tests .ui-accordion-content{
+            max-height: 350px;
+        }
+    </style>
 </head>
 <body  style="background-color: rgb(255, 255, 128);">
     <div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
-                <h1 style="font-family: Amita;"><b><i>Courses</i></b></h1>
+                <h1 style="font-family: Amita;"><b><i>Test Statistics</i></b></h1>
                 <button type="button" onclick="time_out()" class="btn btn-danger" style="float: right;">Log Out</button>
                 <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
                     <li class="col-sm-3 list-group-item"><b>Name : </b><?php if(isset($_SESSION['first_name']) && isset($_SESSION['last_name'])){echo $_SESSION['first_name']." ".$_SESSION['last_name'];} ?></li>
@@ -66,11 +71,110 @@
             </div>
         </div>
     </div>
+<?php
+
+    $query1 = $conn->prepare("SELECT `course_id`,`course_name`,`no_of_tests` FROM `course` WHERE `admin_id` = ?");
+    $query1->bind_param("s",$_SESSION['id']);
+    if($query1->execute())
+    {
+        $tests = array();
+        $query1->store_result();
+        $query1->bind_result($course_id,$course_name,$no_of_tests);
+        echo "<script> $(document).ready(function(){\n";
+        while($query1->fetch())
+        {
+            $course_name = replace_newline($course_name);
+            echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_tests' class='tests'></div>\");";
+            for($i = 1;$i<=$no_of_tests;$i++)
+            {
+                if($i<10)
+                    $testid = "T0$i";
+                else
+                    $testid = "T$i";
+                $tests[$course_id."_".$testid] = 0;
+                echo "$('#$course_id"."_tests').append(\"<div>$testid</div><div id='$course_id"."_$testid'><input class='form-control' id='myInput_$course_id"."_$testid' type='text' placeholder='Search Students'><br><table class='table table-bordered'><thead><tr><th>USN</th><th>Name</th><th>Result</th></tr></thead><tbody></tbody></table></div>\");\n";
+                echo "$('#myInput_'+'$course_id'+'_$testid').attr('onkeyup', 'search_student(\"$course_id\"+\"_$testid\")')\n";
+            }
+        }
+        echo "\n});</script>";
+        $query1->close();
+        $query2 = $conn->prepare("SELECT `tests`.`usn`,`tests`.`course_id`,`tests`.`test_id`,`student`.`first_name`,`student`.`last_name`,`tests`.`result` FROM ((`tests` INNER JOIN `course` ON `tests`.`course_id`=`course`.`course_id` AND `course`.`admin_id` = ?) INNER JOIN `student` ON `tests`.`usn` = `student`.`usn`)");
+        $query2->bind_param("s",$_SESSION['id']);
+        if($query2->execute())
+        {
+            $query2->store_result();
+            $query2->bind_result($usn,$course_id,$testid,$first_name,$last_name,$result);
+            echo "<script> $(document).ready(function(){\n";
+            while($query2->fetch())
+            {
+                $name = $first_name." ".$last_name;
+                $tests[$course_id."_".$testid] = 1;
+                echo "$('#$course_id'+'_$testid table tbody').append(\"<tr><td>$usn</td><td>$name</td><td>$result</td></tr>\");";
+                
+            }
+            echo "\n});</script>";
+            $query2->close();
+            foreach($tests as $x => $x_value) {
+                if($x_value == 0)
+                {
+                    echo "<script>$(document).ready(function(){\n$('#$x table').remove();\n$(\" <br><div class='alert alert-info'>No Students taken test yet </div>\").insertAfter('#myInput_".$x."');\n}); </script>";
+                }
+            }
+        }
+        else
+        {
+            echo "<script> flag = 1; </script>";
+        }
+    }
+    else
+    {
+        echo "<script> flag = 1; </script>";
+    }
+
+?>
 <script>
     function time_out()
     {
         var ip = '<?php echo $server_ip; ?>';
         window.location.href = 'http://'+ip+'/logout.php'; 
     }
+
+    if(flag == 1)
+    {
+        $("#alert").css("display","block");
+    }
+
+    function search_student(id)
+    {
+        var value = $("#myInput_"+id).val().toLowerCase();
+        $("#"+id+" table tbody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    }
+
+    $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".course_value").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                $("#accordion_first").accordion({active:false});
+            });
+        });
+
+        $( "#accordion_first" ).accordion({
+            collapsible:true,
+            active:false,
+            heightStyle:true
+
+        });
+
+        $( ".tests" ).accordion({
+            collapsible:true,
+            active:false,
+            heightStyle:true
+
+        });
+    });
 </script>
 </body>
+</html>
