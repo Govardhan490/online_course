@@ -26,7 +26,7 @@
     <script src="../jquery-ui/jquery-ui.js"></script>
     <style>
         #accordion_first .ui-accordion-content {
-            max-height: 350px;
+            max-height: 400px;
         }
     </style>
 </head>
@@ -42,7 +42,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row" style="height: 610px;">
+            <div class="card-body row">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
@@ -141,6 +141,11 @@
     if(flag == 1)
     {
         $("#alert").css("display","block");
+    }
+
+    if(no_course == 1)
+    {
+        $("#no_course").css("display","block");
     }
 
     function search_student(course_id)

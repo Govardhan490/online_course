@@ -32,6 +32,22 @@ if(isset($_SESSION['interact_usn']) && ($current_file!="/admin_src/as_interact_2
     unset($_SESSION['interact_student_name']); 
 }
 
+if(isset($_SESSION['f_interact_admin_id']) && ($current_file!="/faculty_src/fa_interact_2.php" &&  $current_file!="/faculty_src/fa_interact_3.php"))
+{
+    unset($_SESSION['f_interact_course_id']);
+    unset($_SESSION['f_interact_admin_id']);
+    unset($_SESSION['f_interact_course_name']);
+    unset($_SESSION['f_interact_admin_name']); 
+}
+
+if(isset($_SESSION['f_interact_usn']) && ($current_file!="/faculty_src/fs_interact_2.php" &&  $current_file!="/faculty_src/fs_interact_3.php"))
+{
+    unset($_SESSION['f_interact_course_id']);
+    unset($_SESSION['f_interact_usn']);
+    unset($_SESSION['f_interact_course_name']);
+    unset($_SESSION['f_interact_student_name']); 
+}
+
 function loggedin(){
     if(isset($_SESSION['role']) && isset($_SESSION['id']) && !empty($_SESSION['role']) && !empty($_SESSION['id'])){
         return true;

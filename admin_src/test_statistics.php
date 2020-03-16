@@ -26,7 +26,7 @@
     <script src="../jquery-ui/jquery-ui.js"></script>
     <style>
         #accordion_first .ui-accordion-content, .tests .ui-accordion-content{
-            max-height: 350px;
+            max-height: 400px;
         }
     </style>
 </head>
@@ -42,7 +42,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row" style="height: 610px;">
+            <div class="card-body row">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
@@ -80,50 +80,56 @@
         $tests = array();
         $query1->store_result();
         $query1->bind_result($course_id,$course_name,$no_of_tests);
-        echo "<script> $(document).ready(function(){\n";
-        while($query1->fetch())
+        if($query1->num_rows > 0)
         {
-            $course_name = replace_newline($course_name);
-            echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_tests' class='tests'></div>\");";
-            for($i = 1;$i<=$no_of_tests;$i++)
-            {
-                if($i<10)
-                    $testid = "T0$i";
-                else
-                    $testid = "T$i";
-                $tests[$course_id."_".$testid] = 0;
-                echo "$('#$course_id"."_tests').append(\"<div>$testid</div><div id='$course_id"."_$testid'><input class='form-control' id='myInput_$course_id"."_$testid' type='text' placeholder='Search Students'><br><table class='table table-bordered'><thead><tr><th>USN</th><th>Name</th><th>Result</th></tr></thead><tbody></tbody></table></div>\");\n";
-                echo "$('#myInput_'+'$course_id'+'_$testid').attr('onkeyup', 'search_student(\"$course_id\"+\"_$testid\")')\n";
-            }
-        }
-        echo "\n});</script>";
-        $query1->close();
-        $query2 = $conn->prepare("SELECT `tests`.`usn`,`tests`.`course_id`,`tests`.`test_id`,`student`.`first_name`,`student`.`last_name`,`tests`.`result` FROM ((`tests` INNER JOIN `course` ON `tests`.`course_id`=`course`.`course_id` AND `course`.`admin_id` = ?) INNER JOIN `student` ON `tests`.`usn` = `student`.`usn`)");
-        $query2->bind_param("s",$_SESSION['id']);
-        if($query2->execute())
-        {
-            $query2->store_result();
-            $query2->bind_result($usn,$course_id,$testid,$first_name,$last_name,$result);
             echo "<script> $(document).ready(function(){\n";
-            while($query2->fetch())
+            while($query1->fetch())
             {
-                $name = $first_name." ".$last_name;
-                $tests[$course_id."_".$testid] = 1;
-                echo "$('#$course_id'+'_$testid table tbody').append(\"<tr><td>$usn</td><td>$name</td><td>$result</td></tr>\");";
-                
+                $course_name = replace_newline($course_name);
+                echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_tests' class='tests'></div>\");";
+                for($i = 1;$i<=$no_of_tests;$i++)
+                {
+                    if($i<10)
+                        $testid = "T0$i";
+                    else
+                        $testid = "T$i";
+                    $tests[$course_id."_".$testid] = 0;
+                    echo "$('#$course_id"."_tests').append(\"<div>$testid</div><div id='$course_id"."_$testid'><input class='form-control' id='myInput_$course_id"."_$testid' type='text' placeholder='Search Students'><br><table class='table table-bordered'><thead><tr><th>USN</th><th>Name</th><th>Result</th></tr></thead><tbody></tbody></table></div>\");\n";
+                    echo "$('#myInput_'+'$course_id'+'_$testid').attr('onkeyup', 'search_student(\"$course_id\"+\"_$testid\")')\n";
+                }
             }
             echo "\n});</script>";
-            $query2->close();
-            foreach($tests as $x => $x_value) {
-                if($x_value == 0)
+            $query1->close();
+            $query2 = $conn->prepare("SELECT `tests`.`usn`,`tests`.`course_id`,`tests`.`test_id`,`student`.`first_name`,`student`.`last_name`,`tests`.`result` FROM ((`tests` INNER JOIN `course` ON `tests`.`course_id`=`course`.`course_id` AND `course`.`admin_id` = ?) INNER JOIN `student` ON `tests`.`usn` = `student`.`usn`)");
+            $query2->bind_param("s",$_SESSION['id']);
+            if($query2->execute())
+            {
+                $query2->store_result();
+                $query2->bind_result($usn,$course_id,$testid,$first_name,$last_name,$result);
+                echo "<script> $(document).ready(function(){\n";
+                while($query2->fetch())
                 {
-                    echo "<script>$(document).ready(function(){\n$('#$x table').remove();\n$(\" <br><div class='alert alert-info'>No Students taken test yet </div>\").insertAfter('#myInput_".$x."');\n}); </script>";
+                    $name = $first_name." ".$last_name;
+                    $tests[$course_id."_".$testid] = 1;
+                    echo "$('#$course_id'+'_$testid table tbody').append(\"<tr><td>$usn</td><td>$name</td><td>$result</td></tr>\");";                        
                 }
+                echo "\n});</script>";
+                $query2->close();
+                foreach($tests as $x => $x_value) {
+                    if($x_value == 0)
+                    {
+                        echo "<script>$(document).ready(function(){\n$('#$x table').remove();\n$(\" <br><div class='alert alert-info'>No Students taken test yet </div>\").insertAfter('#myInput_".$x."');\n}); </script>";
+                    }
+                }
+            }
+            else
+            {
+                echo "<script> flag = 1; </script>";
             }
         }
         else
         {
-            echo "<script> flag = 1; </script>";
+            echo "<script> no_course = 1; </script>";
         }
     }
     else
@@ -174,6 +180,11 @@
             heightStyle:true
 
         });
+
+        if(no_course == 1)
+        {
+            document.getElementById("no_course").style.display = "block";
+        }
     });
 </script>
 </body>

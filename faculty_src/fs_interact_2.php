@@ -2,16 +2,19 @@
 
     require '../core.inc.php';
     require '../connect.inc.php';
-    if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
+
+    if(!loggedin() || (loggedin() && ($_SESSION['role'])!="faculty"))
         header("Location:../index.php");
     
+    echo "<script> var no_course = 0; </script>";
+
     if(isset($_POST['interact']))
     {
         $value = explode("_",$_POST['interact']);
-        $_SESSION['interact_course_id'] = $value[0];
-        $_SESSION['interact_faculty_id'] = $value[1];
-        $_SESSION['interact_course_name'] = $value[2];
-        $_SESSION['interact_faculty_name'] = $value[3];
+        $_SESSION['f_interact_course_id'] = $value[0];
+        $_SESSION['f_interact_usn'] = $value[1];
+        $_SESSION['f_interact_course_name'] = $value[2];
+        $_SESSION['f_interact_student_name'] = $value[3];
     }
     echo "<script> var flag = 0; </script>";
     echo "<script> var invalid_file = 0; </script>";
@@ -36,10 +39,12 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Faculty Interaction</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Faculty Student Interaction</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -50,16 +55,21 @@
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
     <script src="../jquery-ui/jquery-ui.js"></script>
     <style>
+        .timestamp{
+            color: red;
+            float: right;
+            font-size: 15px;
+        }
         #accordion_first .ui-accordion-content {
-            max-height: 350px;
+            max-height: 400px;
         }
     </style>
 </head>
-<body  style="background-color: rgb(255, 255, 128);">
+<body style="background-color: rgb(255, 255, 128);">
     <div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
-                <h1 style="font-family: Amita;"><b><i>Faculty Interaction</i></b></h1>
+                <h1 style="font-family: Amita;"><b><i>Faculty Student Interaction</i></b></h1>
                 <button type="button" onclick="time_out()" class="btn btn-danger" style="float: right;">Log Out</button>
                 <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
                     <li class="col-sm-3 list-group-item"><b>Name : </b><?php if(isset($_SESSION['first_name']) && isset($_SESSION['last_name'])){echo $_SESSION['first_name']." ".$_SESSION['last_name'];} ?></li>
@@ -69,28 +79,31 @@
             </div>
             <div class="card-body row">
                 <div class="col-sm-3 list-group">
-                    <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
-                    <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
-                    <a href="assign_faculty.php" class="list-group-item list-group-item-action" style="color: black;">Assign Faculty for pending courses</a>
-                    <a href="admin_announcements.php" class="list-group-item list-group-item-action" style="color: black;">Make Announcements</a>
-                    <a href="af_interact.php" class="list-group-item list-group-item-action active">Interact with Faculty</a>
-                    <a href="as_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Students</a>
-                    <a href="student_registered.php" class="list-group-item list-group-item-action" style="color: black;">List of Students registered for a course</a>
-                    <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">Test Statistics</a>
-                    <a href="admin_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
+                    <a href="view_handling_course.php" class="list-group-item list-group-item-action" style="color: black">View Handling Courses</a>
+                    <a href="apply_for_course.php" class="list-group-item list-group-item-action" style="color: black;">Apply for Courses</a>
+                    <a href="view_applied_course.php" class="list-group-item list-group-item-action" style="color: black">View Applied Courses</a>
+                    <a href="faculty_announcements.php" class="list-group-item list-group-item-action" style="color: black;">Make Announcement</a>
+                    <a href="see_admin_announcements.php" class="list-group-item list-group-item-action" style="color: black;">See Admin Announcement</a>
+                    <a href="fa_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Admin</a>
+                    <a href="fs_interact.php" class="list-group-item list-group-item-action active">Interact with Students</a>
+                    <a href="upload_materials.php" class="list-group-item list-group-item-action" style="color: black;">Upload Materials</a>
+                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create Tests</a>
+                    <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">See Test Statistics</a>
+                    <a href="see_registered.php" class="list-group-item list-group-item-action" style="color: black;">See Registered Students for Course</a>
+                    <a href="faculty_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
                 </div>
                 <div class="col-sm-9">
                     <div class="alert alert-danger" id="alert" style="display: none;">
                         <strong>Oops!</strong> Some Error happened please refresh the page; 
                     </div>
                     <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
-                        <li class="col-sm-4 list-group-item"><b>Faculty Name : </b><?php if(isset($_SESSION['interact_faculty_name'])){echo $_SESSION['interact_faculty_name'];} ?></li>
-                        <li class="col-sm-5 list-group-item"><b>Course Name : </b><?php if(isset($_SESSION['interact_course_name'])){echo $_SESSION['interact_course_name'];} ?></li>
+                        <li class="col-sm-4 list-group-item"><b>Faculty Name : </b><?php if(isset($_SESSION['f_interact_admin_name'])){echo $_SESSION['f_interact_admin_name'];} ?></li>
+                        <li class="col-sm-5 list-group-item"><b>Course Name : </b><?php if(isset($_SESSION['f_interact_course_name'])){echo $_SESSION['f_interact_course_name'];} ?></li>
                     </ul>
                     <div class="card" style="overflow:scroll;height:400px;background-color:rgb(255, 255, 210);" id="chats">
                     </div>
                     <br>
-                    <form action="af_interact_3.php" method="post" onsubmit="return filesize_validate()" enctype="multipart/form-data">
+                    <form action="fs_interact_3.php" method="post" onsubmit="return filesize_validate()" enctype="multipart/form-data">
                         <div class="custom-control custom-radio custom-control-inline">
                             <input onclick="showForm(0)" checked type="radio" class="custom-control-input" id="customRadio" name="filetype" value="message" required>
                             <label class="custom-control-label" for="customRadio">Text Message</label>
@@ -112,55 +125,67 @@
             </div>
         </div>
     </div>
-
-<?php
-
-    $query3 = $conn->prepare("SELECT * FROM `fa_interact` WHERE `course_id` = ? ORDER BY `time_stamp`");
-    $query3->bind_param("s",$_SESSION['interact_course_id']);
-    if($query3->execute())
-    {
-        $result = $query3->get_result();
-        if($result->num_rows > 0)
-        {
-            echo "<script> $(document).ready(function(){\n";
-            while($data = $result->fetch_assoc())
-            {
-                $time = date("g:i a F j, Y ", strtotime($data['time_stamp']));
-                $msg = substr($data['message'],5,strlen($data['message'])-5);
-                $message = replace_newline($data['message']);
-                if($data['flag'] == 1)
-                {
-                    if($data['msg_type'] == 'text')
-                    {
-                        echo "$('#chats').append(\"<div style='margin:10px;'><span style='padding:10px;background-color:white;margin:2px;font-size:20px;'>$message <span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
-                    }
-                    else
-                    {
-                        echo "$('#chats').append(\"<div style='margin:10px;'><span style='padding:10px;background-color:white;margin:2px;font-size:20px;'><a href='../courses/$data[course_id]/fa_interact/$data[message]' download>$msg</a><span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
-                    }
-                }
-                else if($data['flag'] == 0)
-                {
-                    if($data['msg_type'] == 'text')
-                    {
-                        echo "$('#chats').append(\"<div align='right' style='margin:10px;'><span style='padding:10px;background-color:rgb(252, 206, 255);margin:2px;font-size:20px;'>$message <span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";                    }
-                    else
-                    {
-                        echo "$('#chats').append(\"<div align='right' style='margin:10px;'><span style='padding:10px;background-color:rgb(252, 206, 255);margin:2px;font-size:20px;'><a href='../courses/$data[course_id]/fa_interact/$data[message]' download>$msg</a><span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
-                    }
-                }
-            }
-            echo "\n});</script>";
-        }
-    }
-    else
-    {
-        echo "<script> var invalid_file = 1; </script>";
-    }
     
-?>
+    <?php
+
+        $query3 = $conn->prepare("SELECT * FROM `sf_interact` WHERE `course_id` = ? AND `usn` = ? ORDER BY `time_stamp`");
+        $query3->bind_param("ss",$_SESSION['f_interact_course_id'],$_SESSION['f_interact_usn']);
+        if($query3->execute())
+        {
+            $result = $query3->get_result();
+            if($result->num_rows > 0)
+            {
+                echo "<script> $(document).ready(function(){\n";
+                while($data = $result->fetch_assoc())
+                {
+                    $time = date("g:i a F j, Y ", strtotime($data['time_stamp']));
+                    $msg = substr($data['message'],5,strlen($data['message'])-5);
+                    $message = replace_newline($data['message']);
+                    if($data['flag'] == 1)
+                    {
+                        if($data['msg_type'] == 'text')
+                        {
+                            echo "$('#chats').append(\"<div style='margin:10px;'><span style='padding:10px;background-color:white;margin:2px;font-size:20px;'>$message <span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
+                        }
+                        else
+                        {
+                            echo "$('#chats').append(\"<div style='margin:10px;'><span style='padding:10px;background-color:white;margin:2px;font-size:20px;'><a href='../courses/$data[course_id]/fs_interact/$data[message]' download>$msg</a><span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
+                        }
+                    }
+                    else if($data['flag'] == 0)
+                    {
+                        if($data['msg_type'] == 'text')
+                        {
+                            echo "$('#chats').append(\"<div align='right' style='margin:10px;'><span style='padding:10px;background-color:rgb(252, 206, 255);margin:2px;font-size:20px;'>$message <span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";                    }
+                        else
+                        {
+                            echo "$('#chats').append(\"<div align='right' style='margin:10px;'><span style='padding:10px;background-color:rgb(252, 206, 255);margin:2px;font-size:20px;'><a href='../courses/$data[course_id]/fs_interact/$data[message]' download>$msg</a><span style='color:red;font-size:13px;'>($time)</span></span></div>\");\n";
+                        }
+                    }
+                }
+                echo "\n});</script>";
+            }
+        }
+        else
+        {
+            echo "<script> var invalid_file = 1; </script>";
+        }
+
+    ?>
+
+</body>
 
 <script>
+    if(flag == 1)
+    {
+        document.getElementById("alert").style.display = "block";
+    }
+
+    if(no_course == 1)
+    {
+        document.getElementById("no_course").style.display = "block";
+    }
+
     function time_out()
     {
         var ip = '<?php echo $server_ip; ?>';
@@ -230,7 +255,5 @@
         document.getElementById("invalid_file").style.display = "block";
         document.getElementById("invalid_file").innerHTML = "Sorry Some error occurred try again";
     }
-
 </script>
-</body>
 </html>

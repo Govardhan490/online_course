@@ -33,11 +33,6 @@
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.structure.css">
     <link rel="stylesheet" href="../jquery-ui/jquery-ui.theme.css">
     <script src="../jquery-ui/jquery-ui.js"></script>
-    <style>
-        #accordion_first .ui-accordion-content {
-            max-height: 350px;
-        }
-    </style>
 </head>
 <body  style="background-color: rgb(255, 255, 128);">
     <div class="container-fluid pt-1">
@@ -51,7 +46,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row" style="height: 610px;">
+            <div class="card-body row">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
@@ -131,7 +126,7 @@
                         $course_name = replace_newline($course_name);
                         $phone_no = replace_newline($phone_no);
                         $email = replace_newline($email);
-                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ". "$credentials"." </li><li class='list-group-item'><b>Phone No</b>&nbsp;&nbsp;&nbsp;  : ".$phone_no."</li><li class='list-group-item'><b>Email</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."_".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
+                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ". "$credentials"." </li><li class='list-group-item'><b>Phone No</b> : ".$phone_no."</li><li class='list-group-item'><b>Email</b> :".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."_".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
                     }
                     echo "\n});</script>";
                 }

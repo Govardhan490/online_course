@@ -42,7 +42,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body" style="height: 610px;">
+            <div class="card-body">
                 <div class="alert alert-success" id="success" style="display: none;">
                     <strong>Oops!</strong> Some Error happened please refresh the page; 
                 </div>

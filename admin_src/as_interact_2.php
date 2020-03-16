@@ -71,7 +71,7 @@
                     <li class="col-sm-3 list-group-item"><b>Phone Number : </b><?php if(isset($_SESSION['phone_no'])){echo $_SESSION['phone_no'];} ?></li>
                 </ul>
             </div>
-            <div class="card-body row" style="height: 610px;">
+            <div class="card-body row">
                 <div class="col-sm-3 list-group">
                     <a href="create_course.php" class="list-group-item list-group-item-action" style="color: black;">Create Course</a>
                     <a href="view_created_course.php" class="list-group-item list-group-item-action" style="color: black;">View Created Course</a>
@@ -91,7 +91,7 @@
                         <li class="col-sm-4 list-group-item"><b>Student Name : </b><?php if(isset($_SESSION['interact_student_name'])){echo $_SESSION['interact_student_name'];} ?></li>
                         <li class="col-sm-5 list-group-item"><b>Course Name : </b><?php if(isset($_SESSION['interact_course_name'])){echo $_SESSION['interact_course_name'];} ?></li>
                     </ul>
-                    <div class="card" style="overflow:scroll;height: 60%;background-color:rgb(255, 255, 210);" id="chats">
+                    <div class="card" style="overflow:scroll;height: 400px;background-color:rgb(255, 255, 210);" id="chats">
                     </div>
                     <br>
                     <form action="as_interact_3.php" method="post" onsubmit="return filesize_validate()" enctype="multipart/form-data">
