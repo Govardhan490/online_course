@@ -8,7 +8,7 @@
 
     if(isset($_GET['id']))
     {
-        $arr = explode("_",$_GET['id']);
+        $arr = explode("~",$_GET['id']);
         $course_id = $arr[0];
         $faculty_id = $arr[1];
         $query = $conn->prepare("UPDATE `course` SET `faculty_id` = ? WHERE `course_id` = ?");

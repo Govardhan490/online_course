@@ -60,7 +60,7 @@
                     <a href="fa_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Admin</a>
                     <a href="fs_interact.php" class="list-group-item list-group-item-action active">Interact with Students</a>
                     <a href="upload_materials.php" class="list-group-item list-group-item-action" style="color: black;">Upload Materials</a>
-                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create Tests</a>
+                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create and View Tests</a>
                     <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">See Test Statistics</a>
                     <a href="see_registered.php" class="list-group-item list-group-item-action" style="color: black;">See Registered Students for Course</a>
                     <a href="faculty_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
@@ -104,7 +104,7 @@
                     $student_last_name = replace_newline($student_last_name);
                     $student_email = replace_newline($student_email);
                     $student_phone_no = replace_newline($student_phone_no);
-                    $submit_value = $course_id."_".$usn."_".$course_name."_".$student_first_name." ".$student_last_name;
+                    $submit_value = $course_id."~".$usn."~".$course_name."~".$student_first_name." ".$student_last_name;
                     if(!isset($courses[$course_id]))
                         $courses[$course_id] = 1;
                     if($courses[$course_id] == 1)

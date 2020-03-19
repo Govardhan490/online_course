@@ -48,6 +48,13 @@ if(isset($_SESSION['f_interact_usn']) && ($current_file!="/faculty_src/fs_intera
     unset($_SESSION['f_interact_student_name']); 
 }
 
+if(isset($_SESSION['create_test_course_id']) && ($current_file!="/faculty_src/create_tests_2.php" &&  $current_file!="/faculty_src/create_tests_3.php" && $current_file!="/faculty_src/create_tests_4.php"))
+{
+    unset($_SESSION['create_test_course_id']);
+    unset($_SESSION['create_test_test_id']);
+    unset($_SESSION['create_test_course_name']);
+}
+
 function loggedin(){
     if(isset($_SESSION['role']) && isset($_SESSION['id']) && !empty($_SESSION['role']) && !empty($_SESSION['id'])){
         return true;

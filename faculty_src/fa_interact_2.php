@@ -10,7 +10,7 @@
 
     if(isset($_POST['interact']))
     {
-        $value = explode("_",$_POST['interact']);
+        $value = explode("~",$_POST['interact']);
         $_SESSION['f_interact_course_id'] = $value[0];
         $_SESSION['f_interact_admin_id'] = $value[1];
         $_SESSION['f_interact_course_name'] = $value[2];
@@ -88,7 +88,7 @@
                     <a href="fa_interact.php" class="list-group-item list-group-item-action active">Interact with Admin</a>
                     <a href="fs_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Students</a>
                     <a href="upload_materials.php" class="list-group-item list-group-item-action" style="color: black;">Upload Materials</a>
-                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create Tests</a>
+                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create and View Tests</a>
                     <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">See Test Statistics</a>
                     <a href="see_registered.php" class="list-group-item list-group-item-action" style="color: black;">See Registered Students for Course</a>
                     <a href="faculty_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
@@ -98,7 +98,7 @@
                         <strong>Oops!</strong> Some Error happened please refresh the page; 
                     </div>
                     <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
-                        <li class="col-sm-4 list-group-item"><b>Faculty Name : </b><?php if(isset($_SESSION['f_interact_admin_name'])){echo $_SESSION['f_interact_admin_name'];} ?></li>
+                        <li class="col-sm-4 list-group-item"><b>Admin Name : </b><?php if(isset($_SESSION['f_interact_admin_name'])){echo $_SESSION['f_interact_admin_name'];} ?></li>
                         <li class="col-sm-5 list-group-item"><b>Course Name : </b><?php if(isset($_SESSION['f_interact_course_name'])){echo $_SESSION['f_interact_course_name'];} ?></li>
                     </ul>
                     <div class="card" style="overflow:scroll;height:400px;background-color:rgb(255, 255, 210);" id="chats">

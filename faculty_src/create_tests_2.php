@@ -6,29 +6,38 @@
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="faculty"))
         header("Location:../index.php");
     
-    echo "<script> var no_course = 0;var create_success = -1;var xml_fail = 0;  </script>";
-
-    if(isset($_SESSION['create_success']))
+    if(isset($_GET['test_id']) && !empty($_GET['test_id']))
     {
-        if($_SESSION['create_success'] == 1)
+        $value = explode("~",$_GET['test_id']);
+        $course_id = $value[0];
+        $test_id = $value[1];
+        $course_name = $value[2];
+        $query = $conn->prepare("SELECT `course_id` FROM `course` WHERE `faculty_id` = ? AND `course_id` = ?");
+        $query->bind_param("ss",$_SESSION['id'],$course_id);
+        if($query->execute())
         {
-            echo "<script> var create_success = 1;  </script>";
+            $query->store_result();
+            if($query->num_rows == 1)
+            {
+                $_SESSION['create_test_course_id'] = $course_id;
+                $_SESSION['create_test_test_id'] = $test_id;
+                $_SESSION['create_test_course_name'] = $course_name;
+            }
+            else
+            {
+                header("Location:create_tests.php");
+            }
         }
-        else if($_SESSION['create_success'] == 0)
+        else
         {
-            echo "<script> var create_success = 0;  </script>";
-        }
-        unset($_SESSION['create_success']);
+            header("Location:create_tests.php");
+        }        
     }
-
-    if(isset($_SESSION['xml_fail']))
+    else
     {
-        echo "<script> var xml_fail = 1;  </script>";
-        unset($_SESSION['xml_fail']);
+        header("Location:create_tests.php");
     }
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +45,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Create and View Tests</title>
+    <title>Create Tests</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -51,7 +60,7 @@
     <div class="container-fluid pt-1">
         <div class="card">
             <div class="card-header p-3" style="text-align:center;display:inline;">
-                <h1 style="font-family: Amita;"><b><i>Create and View Tests</i></b></h1>
+                <h1 style="font-family: Amita;"><b><i>Create Tests</i></b></h1>
                 <button type="button" onclick="time_out()" class="btn btn-danger" style="float: right;">Log Out</button>
                 <ul class="d-flex justify-content-center row list-group list-group-horizontal" style="text-align: center;margin:auto;">
                     <li class="col-sm-3 list-group-item"><b>Name : </b><?php if(isset($_SESSION['first_name']) && isset($_SESSION['last_name'])){echo $_SESSION['first_name']." ".$_SESSION['last_name'];} ?></li>
@@ -81,64 +90,39 @@
                     <div class="alert alert-info" id="no_course" style="display: none;">
                         You are not handling any courses yet
                     </div>
-                    <div class="alert alert-success" id="create_success" style="display: none;">
-                        Test Creation Successful
-                    </div>
                     <div class="container">
-                        <h2>Courses</h2>
-                        <input class="form-control" id="myInput" type="text" placeholder="Search.."><br>
-                        <div id="accordion_first">
-                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">Course : <?php echo "$_SESSION[create_test_course_name] ($_SESSION[create_test_course_id])"; ?></li>
+                            <li class="list-group-item">Test No : <?php echo "$_SESSION[create_test_test_id]"; ?></li>
+                        </ul>
+                        <br>
+                        <h4>Test Description</h4>
+                        <form action="create_tests_3.php" onsubmit="return validateYouTubeUrl()" method="post" style="padding: 20px; ">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input onclick="showForm(1)" checked type="radio" class="custom-control-input" id="customRadio" name="video" value="yes" required>
+                                <label class="custom-control-label" for="customRadio">Video Required</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input onclick="showForm(0)" type="radio" class="custom-control-input" id="customRadio2" name="video" value="no" required>
+                                <label class="custom-control-label" for="customRadio2">Video not Required</label>
+                            </div>
+                            <br><br>
+                            <div class="row">
+                                <input class="form-control" type="url" name="link" id="link" placeholder="Youtube Video Link" required>
+                                <br><br>
+                                <input type="number" name="no_questions" id="no_questions" max="15" placeholder="No of Questions" class="form-control col-sm-6" min='5' required>
+                                <input type="number" name="total_marks" id="total_marks" max="20" placeholder="Total Marks" class="form-control col-sm-6" min='10' required>
+                            </div>
+                            <br>
+                            <div align='right' class="form-group"> 
+                                <button class="btn btn-success text-right" type="submit"> Create </button> 
+                            </div> 
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <?php
-
-        $query1 = $conn->prepare("SELECT `course`.`course_id`,`course`.`no_of_tests`,`course`.`course_name` FROM `course` WHERE`faculty_id` = ?");
-        $query1->bind_param("s",$_SESSION['id']);
-        if($query1->execute())
-        {
-            $query1->store_result();
-            $query1->bind_result($course_id,$no_of_tests,$course_name);
-            if($query1->num_rows > 0)
-            {
-                echo "<script> $(document).ready(function(){\n";
-                while($query1->fetch())
-                {
-                    $course_name = replace_newline("$course_name");
-                    echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_test_details'><ul class='list-group'></ul></div>\");\n";
-                    for($i=1;$i<=$no_of_tests+1;$i++)
-                    {
-                        if($i<10)
-                            $test_id = "T0$i";
-                        else
-                            $test_id = "T$i";
-                        if($i!=$no_of_tests+1)
-                            echo "$('#$course_id"."_test_details ul').append(\"<a href='view_tests.php?test_id=$course_id"."~$test_id'><li class='list-group-item'>$test_id</li></a>\");\n";
-                        else
-                            echo "$('#$course_id"."_test_details').append(\"<form action='create_tests_2.php' method='get'><br><div align='right' class='form-group'> <button class='btn btn-success text-right' type='submit' name='test_id' value='$course_id"."~$test_id"."~$course_name'> Create Test </button></div></form>\");\n";
-                    }
-                    if($no_of_tests == 0)
-                    {
-                        echo "$('#$course_id"."_test_details ul').append(\" <br><div class='alert alert-info'>No tests Created Yet </div>\");\n";
-                    }
-                }
-                echo "\n});</script>";
-            }
-            else
-            {
-                echo "<script> no_course = 1; </script>";
-            }
-        }
-        else
-        {
-            echo "<script> flag = 1; </script>";
-        }
-
-    ?>
 
 </body>
 
@@ -153,43 +137,50 @@
         document.getElementById("no_course").style.display = "block";
     }
 
-    if(create_success == 1)
-    {
-        document.getElementById("create_success").style.display = "block";
-    }
-    else if(create_success == 0)
-    {
-        document.getElementById("alert").style.display = "block";
-        document.getElementById("alert").innerHTML = "Test Creation failed due to some error please try again later";
-    }
-
-    if(xml_fail == 1)
-    {
-        document.getElementById("alert").style.display = "block";
-        document.getElementById("alert").innerHTML = "Cannot View Test Please try again later";
-    }
-
     function time_out()
     {
         var ip = '<?php echo $server_ip; ?>';
         window.location.href = 'http://'+ip+'/logout.php'; 
     }
 
+    function showForm(x)
+    {
+        if(x == 1)
+        {
+            document.getElementById("link").style.display = "block";
+            document.getElementById("link").setAttribute("required","");
+        }
+        if(x == 0)
+        {
+            document.getElementById("link").style.display = "none";
+            document.getElementById("link").removeAttribute("required");
+        }
+    }
+
+    function validateYouTubeUrl()
+    {
+        if($('input[name=video]:checked').val() == 'yes')
+        {
+            var url = $('#link').val();
+            if (url != undefined || url != '') {
+                var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+                var match = url.match(regExp);
+                if (match && match[2].length == 11) {
+                    return true;
+                    //$('#ytplayerSide').attr('src', 'https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
+                }
+                else {
+                    $("#alert").css("display","block");
+                    $("#alert").text("Please enter a valid Youtube URL");
+                    return false;
+                }
+            }
+        }
+        else
+            return true;
+    }
     $(document).ready(function(){
-        $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $(".course_value").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                $("#accordion_first").accordion({active:false});
-            });
-        });
-
-        $( "#accordion_first" ).accordion({
-            collapsible:true,
-            active:false,
-            heightStyle:true
-
-        });
+        
     });
 </script>
 </html>

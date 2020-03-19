@@ -7,7 +7,7 @@
     
     if(isset($_POST['interact']))
     {
-        $value = explode("_",$_POST['interact']);
+        $value = explode("~",$_POST['interact']);
         $_SESSION['interact_course_id'] = $value[0];
         $_SESSION['interact_faculty_id'] = $value[1];
         $_SESSION['interact_course_name'] = $value[2];
@@ -102,7 +102,7 @@
                         <br>
                         <br>
                         <div class="row" style="margin: auto;">
-                            <textarea name="message" rows="1" class="form-control col-sm-11" placeholder="New Message" id="message"></textarea>
+                            <textarea name="message" rows="1" class="form-control col-sm-11" placeholder="New Message" id="message" required></textarea>
                             <input title="Images/PDFs/DOCs" class="form-control col-sm-11" type="file" name="file" id="file" style="display: none;">   
                             <button align="right" type="submit" class="btn btn-success col-sm-1">Send</button>                     
                         </div>

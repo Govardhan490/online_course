@@ -60,7 +60,7 @@
                     <a href="fa_interact.php" class="list-group-item list-group-item-action active">Interact with Admin</a>
                     <a href="fs_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Students</a>
                     <a href="upload_materials.php" class="list-group-item list-group-item-action" style="color: black;">Upload Materials</a>
-                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create Tests</a>
+                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create and View Tests</a>
                     <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">See Test Statistics</a>
                     <a href="see_registered.php" class="list-group-item list-group-item-action" style="color: black;">See Registered Students for Course</a>
                     <a href="faculty_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
@@ -103,7 +103,7 @@
                     $admin_last_name = replace_newline($admin_last_name);
                     $admin_email = replace_newline($admin_email);
                     $admin_phone_no = replace_newline($admin_phone_no);
-                    $submit_value = $course_id."_".$admin_id."_".$course_name."_".$admin_first_name." ".$admin_last_name;
+                    $submit_value = $course_id."~".$admin_id."~".$course_name."~".$admin_first_name." ".$admin_last_name;
                     echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div><ul class='list-group'><li class='list-group-item'>Admin ID : $admin_id</li><li class='list-group-item'>Admin Name : $admin_first_name $admin_last_name</li><li class='list-group-item'>Admin Email : $admin_email</li><li class='list-group-item'>Admin Phone No : $admin_phone_no</li></ul><div align='right'><br><form method='POST' action='fa_interact_2.php'><button type='submit' class='btn btn-success' name='interact' value='$submit_value'>Interact</button></form></div></div>\");\n";
                 }
                 echo "\n});</script>";

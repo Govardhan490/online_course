@@ -86,7 +86,7 @@
                     <a href="fa_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Admin</a>
                     <a href="fs_interact.php" class="list-group-item list-group-item-action" style="color: black;">Interact with Students</a>
                     <a href="upload_materials.php" class="list-group-item list-group-item-action active">Upload Materials</a>
-                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create Tests</a>
+                    <a href="create_tests.php" class="list-group-item list-group-item-action" style="color: black;">Create and View Tests</a>
                     <a href="test_statistics.php" class="list-group-item list-group-item-action" style="color: black;">See Test Statistics</a>
                     <a href="see_registered.php" class="list-group-item list-group-item-action" style="color: black;">See Registered Students for Course</a>
                     <a href="faculty_home.php" class="list-group-item list-group-item-action" style="color: black;">Home</a>
@@ -152,7 +152,7 @@
                                     </div> 
                                     <br>
                                     <div align='right' class="form-group"> 
-                                        <button class="btn btn-success text-right type="submit"> Upload </button> 
+                                        <button class="btn btn-success text-right" type="submit"> Upload </button> 
                                     </div> 
                             </form> 
                         <h3>Courses</h3>

@@ -126,7 +126,7 @@
                         $course_name = replace_newline($course_name);
                         $phone_no = replace_newline($phone_no);
                         $email = replace_newline($email);
-                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ". "$credentials"." </li><li class='list-group-item'><b>Phone No</b> : ".$phone_no."</li><li class='list-group-item'><b>Email</b> :".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."_".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
+                        echo "$('#".$course_id."_applied').append(\"<div>".$first_name." ".$last_name." (".$faculty_id.")</div><div><ul class='list-group'><li class='list-group-item'><b>Credentials</b>  : ". "$credentials"." </li><li class='list-group-item'><b>Phone No</b> : ".$phone_no."</li><li class='list-group-item'><b>Email</b> :".$email."</li></ul><br><button type='button' onclick=selectFaculty('".$course_id."~".$faculty_id."') class='btn btn-success' style='float:right;'>Select</button></div>\");\n ";
                     }
                     echo "\n});</script>";
                 }

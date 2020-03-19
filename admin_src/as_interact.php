@@ -88,7 +88,7 @@
                 $student_last_name = replace_newline($student_last_name);
                 $student_email = replace_newline($student_email);
                 $student_phone_no = replace_newline($student_phone_no);
-                $submit_value = $course_id."_".$usn."_".$course_name."_".$student_first_name." ".$student_last_name;
+                $submit_value = $course_id."~".$usn."~".$course_name."~".$student_first_name." ".$student_last_name;
                 if(!isset($courses[$course_id]))
                     $courses[$course_id] = 1;
                 if($courses[$course_id] == 1)
