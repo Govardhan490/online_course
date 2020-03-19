@@ -48,6 +48,22 @@ if(isset($_SESSION['f_interact_usn']) && ($current_file!="/faculty_src/fs_intera
     unset($_SESSION['f_interact_student_name']); 
 }
 
+if(isset($_SESSION['s_interact_admin_id']) && ($current_file!="/student_src/sa_interact_2.php" &&  $current_file!="/student_src/sa_interact_3.php"))
+{
+    unset($_SESSION['s_interact_course_id']);
+    unset($_SESSION['s_interact_admin_id']);
+    unset($_SESSION['s_interact_course_name']);
+    unset($_SESSION['s_interact_admin_name']); 
+}
+
+if(isset($_SESSION['s_interact_faculty_id']) && ($current_file!="/student_src/sf_interact_2.php" &&  $current_file!="/student_src/sf_interact_3.php"))
+{
+    unset($_SESSION['s_interact_course_id']);
+    unset($_SESSION['s_interact_faculty_id']);
+    unset($_SESSION['s_interact_course_name']);
+    unset($_SESSION['s_interact_faculty_name']); 
+}
+
 if(isset($_SESSION['create_test_course_id']) && ($current_file!="/faculty_src/create_tests_2.php" &&  $current_file!="/faculty_src/create_tests_3.php" && $current_file!="/faculty_src/create_tests_4.php"))
 {
     unset($_SESSION['create_test_course_id']);
