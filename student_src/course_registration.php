@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div id="dialog-confirm" title="Create Test" style="display: none;">
+            <div id="dialog-confirm" title="Course Registration" style="display: none;">
                 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Once Regsitered you cannot withdraw it. Are you sure?</p>
             </div>
         </div>
@@ -122,7 +122,6 @@
     function register_course(id)
     {
         $("#dialog-confirm").dialog({
-                position: 'center',
                 resizable: false,
                 height: "auto",
                 width: 400,

@@ -71,6 +71,12 @@ if(isset($_SESSION['create_test_course_id']) && ($current_file!="/faculty_src/cr
     unset($_SESSION['create_test_course_name']);
 }
 
+if(isset($_SESSION['take_test_course_id']) && ($current_file!="/student_src/take_tests_1.php" &&  $current_file!="/student_src/take_tests_2.php" && $current_file!="/student_src/take_tests_3.php" && $current_file!="/student_src/take_tests_4.php"))
+{
+    unset($_SESSION['take_test_course_id']);
+    unset($_SESSION['take_test_test_id']);
+}
+
 function loggedin(){
     if(isset($_SESSION['role']) && isset($_SESSION['id']) && !empty($_SESSION['role']) && !empty($_SESSION['id'])){
         return true;

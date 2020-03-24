@@ -85,7 +85,7 @@
                 {
                     $tests[$course_id."_tests"] = 0;
                     $course_name = replace_newline($course_name);
-                    echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_tests' class='tests'><table class='table table-bordered' style='text-align:center;'><thead><tr><th>Test ID</th><th>Result</th></tr></thead><tbody></tbody></table></div>\");";
+                    echo "$('#accordion_first').append(\"<div id='$course_id' class='course_value'>$course_name ($course_id)</div><div id='$course_id"."_tests' class='tests'><table class='table table-bordered' style='text-align:center;'><thead><tr><th>Test ID</th><th>Result (%)</th></tr></thead><tbody></tbody></table></div>\");";
                 }
                 echo "\n});</script>";
                 $query1->close();

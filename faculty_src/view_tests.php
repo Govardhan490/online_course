@@ -80,10 +80,10 @@
                         <label for="link" class="col-sm-6">Video Link</label>
                         <br>
                         <input type="text" name="course_id" id="course_id" style="text-align: center" class="form-control col-sm-1" readonly value="<?php echo $course_id; ?>">
-                        <input type="text" name="test_id" id="test_id" style="text-align: center" class="form-control col-sm-1" readonly value="<?php echo $test_id ?>">
+                        <input type="text" name="test_id" id="test_id" style="text-align: center" class="form-control col-sm-1" readonly value="<?php echo $test_id; ?>">
                         <input type="number" name="no_questions" id="no_questions" style="text-align: center" class="form-control col-sm-1" readonly value="<?php echo $xml->no_of_questions; ?>">
                         <input type="number" name="total_marks" id="total_marks" style="text-align: center" class="form-control col-sm-1" readonly value="<?php echo $xml->total_marks; ?>">
-                        <input type="text" name="video_required" id="video_required" style="text-align: center" class="form-control col-sm-2" readonly value="<?php if($xml->video['required']){echo "Required";}else{echo "Not Required";} ?>">
+                        <input type="text" name="video_required" id="video_required" style="text-align: center" class="form-control col-sm-2" readonly value="<?php if($xml->video['required'] == "1"){echo "Required";}else{echo "Not Required";} ?>">
                         <input type="url" name="link" id="link" style="text-align: center" class="form-control col-sm-6" readonly value="<?php if($xml->video['required']){echo $xml->video->link;}else{echo "-";}?>">
                     </div>
                     <br>
