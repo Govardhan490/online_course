@@ -27,7 +27,8 @@
                 if($query->num_rows() == 1)
                 {
                     $rndno = rand(100000, 999999);
-                    /*Mail Info*/
+                    /* Email Info*/
+                    $mail->addAddress($email);
                     if($mail->send())
                     {
                         $_SESSION['otp'] = $rndno;
@@ -106,7 +107,7 @@
         </div>
     </div>
 
-    
+
 </body>
 
 

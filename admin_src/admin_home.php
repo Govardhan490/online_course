@@ -5,7 +5,7 @@
 
     if(!loggedin() || (loggedin() && ($_SESSION['role'])!="admin"))
         header("Location:../index.php");
-    
+
     echo "<script> var success_flag = 0;</script>";
 
     if(isset($_SESSION['course_creation_success']))
@@ -44,10 +44,10 @@
             </div>
             <div class="card-body">
                 <div class="alert alert-success" id="success" style="display: none;">
-                    <strong>Oops!</strong> Some Error happened please refresh the page; 
+                    <strong>Oops!</strong> Some Error happened please refresh the page;
                 </div>
                 <div class="alert alert-danger" id="alert" style="display: none;">
-                    <strong>Oops!</strong> Some Error happened please refresh the page; 
+                    <strong>Oops!</strong> Some Error happened please refresh the page;
                 </div>
                     <br>
                     <div class="list-group">
@@ -78,7 +78,7 @@ if(flag == 1){
     function time_out()
     {
         var ip = '<?php echo $server_ip; ?>';
-        window.location.href = 'http://'+ip+'/logout.php'; 
+        window.location.href = 'http://'+ip+'/logout.php';
     }
 </script>
 </html>

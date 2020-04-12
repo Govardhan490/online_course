@@ -43,13 +43,13 @@
             else
             {
                 if($role == "admin")
-                    $query = $conn->prepare("SELECT `email` FROM `administrator` WHERE LOWER(`email`) = ?"); 
+                    $query = $conn->prepare("SELECT `email` FROM `administrator` WHERE LOWER(`email`) = ?");
                 else if($role == "faculty")
                     $query = $conn->prepare("SELECT `email` FROM `faculty` WHERE LOWER(`email`) = ?");
                 else if($role == "student")
                     $query = $conn->prepare("SELECT `email` FROM `student` WHERE LOWER(`email`) = ?");
 
-                $email_lower = strtolower($email);   
+                $email_lower = strtolower($email);
                 $query->bind_param("s",$email_lower);
 
                 if($query->execute())
@@ -59,13 +59,13 @@
                     {
                         $query->close();
                         if($role == "admin")
-                            $query1 = $conn->prepare("SELECT `admin_id` FROM `administrator` WHERE LOWER(`admin_id`) = ?");   
+                            $query1 = $conn->prepare("SELECT `admin_id` FROM `administrator` WHERE LOWER(`admin_id`) = ?");
                         else if($role == "faculty")
                             $query1 = $conn->prepare("SELECT `faculty_id` FROM `faculty` WHERE LOWER(`faculty_id`) = ?");
                         else if($role == "student")
                             $query1 = $conn->prepare("SELECT `usn` FROM `student` WHERE LOWER(`usn`) = ?");
 
-                        $unique_id_lower = strtolower($unique_id);    
+                        $unique_id_lower = strtolower($unique_id);
                         $query1->bind_param("s",$unique_id_lower);
 
                         if($query1->execute())
@@ -74,9 +74,7 @@
                             if($query1->num_rows() == 0)
                             {
                                 $query1->close();
-                                $password_hash = md5($password);
-                                $rndno = rand(100000, 999999);
-                                /*Mail Info*/
+                                /* Email Info */
                                 if(!($mail->send()))
                                 {
                                     echo "<script> flag = 4; </script>";
@@ -94,15 +92,15 @@
                                     $_SESSION['phone_num'] = $phone_num;
                                     if($role == "faculty")
                                         $_SESSION['credentials'] = $credentials;
-                                    
+
                                     header("Location:otp.php");
                                 }
                             }
                             else
                             {
-                                echo "<script> flag = 3; </script>"; 
+                                echo "<script> flag = 3; </script>";
                                 $id_flag = 1;
-                            }                      
+                            }
                         }
                         else
                             echo "<script> flag = 4; </script>";
@@ -114,7 +112,7 @@
                     }
                 }
                 else
-                    echo "<script> flag = 4; </script>"; 
+                    echo "<script> flag = 4; </script>";
             }
         }
     }
@@ -199,7 +197,7 @@
         </div>
     </div>
 
-    
+
 </body>
 
 
@@ -223,10 +221,10 @@
         }, false);
     })();
 
-</script> 
+</script>
 
 <script>
-    
+
     var cred_flag = 0;
 
     function cred_delete()
@@ -238,7 +236,7 @@
             var br = document.getElementById("myBr");
             br.remove();
             cred_flag = 0;
-            
+
         }
     }
 
@@ -281,18 +279,18 @@
             else if(flag == 3)
                 alert.innerHTML = "<strong>Error!</strong> USN/SSN already exits, Please try with different USN/SSN";
             else if(flag == 4)
-                alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";        
+                alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";
         }
 
         if(sign_up_fail == 1)
         {
             var alert = document.getElementById("alert");
             alert.style.display = "block";
-            alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";        
+            alert.innerHTML = "<strong>Error!</strong> Some Error Happened while connecting to website. Please try again later";
 
         }
     });
 </script>
-    
+
 
 </html>

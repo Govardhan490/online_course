@@ -5,7 +5,7 @@ session_start();
 
 
 $current_file = $_SERVER['SCRIPT_NAME'];
-$server_ip = "localhost";
+$server_ip = "localhost:8080";
 if(!loggedin() && (isset($_SESSION['otp']) || isset($_SESSION[''])) && $current_file!="/otp.php" && $current_file!='/logout.php'){
     header("Location:/otp.php");
     exit();
@@ -21,7 +21,7 @@ if(isset($_SESSION['interact_faculty_id']) && ($current_file!="/admin_src/af_ind
     unset($_SESSION['interact_course_id']);
     unset($_SESSION['interact_faculty_id']);
     unset($_SESSION['interact_course_name']);
-    unset($_SESSION['interact_faculty_name']); 
+    unset($_SESSION['interact_faculty_name']);
 }
 
 if(isset($_SESSION['interact_usn']) && ($current_file!="/admin_src/as_interact_2.php" &&  $current_file!="/admin_src/as_interact_3.php"))
@@ -29,7 +29,7 @@ if(isset($_SESSION['interact_usn']) && ($current_file!="/admin_src/as_interact_2
     unset($_SESSION['interact_course_id']);
     unset($_SESSION['interact_usn']);
     unset($_SESSION['interact_course_name']);
-    unset($_SESSION['interact_student_name']); 
+    unset($_SESSION['interact_student_name']);
 }
 
 if(isset($_SESSION['f_interact_admin_id']) && ($current_file!="/faculty_src/fa_interact_2.php" &&  $current_file!="/faculty_src/fa_interact_3.php"))
@@ -37,7 +37,7 @@ if(isset($_SESSION['f_interact_admin_id']) && ($current_file!="/faculty_src/fa_i
     unset($_SESSION['f_interact_course_id']);
     unset($_SESSION['f_interact_admin_id']);
     unset($_SESSION['f_interact_course_name']);
-    unset($_SESSION['f_interact_admin_name']); 
+    unset($_SESSION['f_interact_admin_name']);
 }
 
 if(isset($_SESSION['f_interact_usn']) && ($current_file!="/faculty_src/fs_interact_2.php" &&  $current_file!="/faculty_src/fs_interact_3.php"))
@@ -45,7 +45,7 @@ if(isset($_SESSION['f_interact_usn']) && ($current_file!="/faculty_src/fs_intera
     unset($_SESSION['f_interact_course_id']);
     unset($_SESSION['f_interact_usn']);
     unset($_SESSION['f_interact_course_name']);
-    unset($_SESSION['f_interact_student_name']); 
+    unset($_SESSION['f_interact_student_name']);
 }
 
 if(isset($_SESSION['s_interact_admin_id']) && ($current_file!="/student_src/sa_interact_2.php" &&  $current_file!="/student_src/sa_interact_3.php"))
@@ -53,7 +53,7 @@ if(isset($_SESSION['s_interact_admin_id']) && ($current_file!="/student_src/sa_i
     unset($_SESSION['s_interact_course_id']);
     unset($_SESSION['s_interact_admin_id']);
     unset($_SESSION['s_interact_course_name']);
-    unset($_SESSION['s_interact_admin_name']); 
+    unset($_SESSION['s_interact_admin_name']);
 }
 
 if(isset($_SESSION['s_interact_faculty_id']) && ($current_file!="/student_src/sf_interact_2.php" &&  $current_file!="/student_src/sf_interact_3.php"))
@@ -61,7 +61,7 @@ if(isset($_SESSION['s_interact_faculty_id']) && ($current_file!="/student_src/sf
     unset($_SESSION['s_interact_course_id']);
     unset($_SESSION['s_interact_faculty_id']);
     unset($_SESSION['s_interact_course_name']);
-    unset($_SESSION['s_interact_faculty_name']); 
+    unset($_SESSION['s_interact_faculty_name']);
 }
 
 if(isset($_SESSION['create_test_course_id']) && ($current_file!="/faculty_src/create_tests_2.php" &&  $current_file!="/faculty_src/create_tests_3.php" && $current_file!="/faculty_src/create_tests_4.php"))
@@ -87,7 +87,7 @@ function loggedin(){
 }
 
 function replace_newline($var)
-{   
+{
     $var = str_replace ( array("\r\n", "\r", "\n"), "<br>", $var);
     if(substr($var,strlen($var)-4,strlen($var)-1) == '<br>')
         $var = substr($var,0,strlen($var)-4);
